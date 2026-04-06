@@ -1,20 +1,20 @@
 {
-  "name": "workflow-plugins",
+  "name": "my-plugins",
   "owner": {
-    "name": "Hoang Ngo"
+    "name": "Hoang"
   },
   "metadata": {
-    "description": "Personal Claude Code plugins by Hoang Ngo",
+    "description": "claude code plugins for meta workflows",
     "version": "1.0.0"
   },
   "plugins": [
     {
-      "name": "hoang-workflows",
+      "name": "personal-tools",
       "source": "./",
-      "description": "Personal engineering workflow toolkit — prompt copilot, plugin discovery, auto-devlog, and safety guardrails",
+      "description": "Personal engineering workflow toolkit",
       "version": "1.0.0",
       "author": {
-        "name": "Hoang Ngo",
+        "name": "Hoang",
         "url": "https://github.com/ogngnaoh"
       },
       "repository": "https://github.com/ogngnaoh/workflow-plugins",
