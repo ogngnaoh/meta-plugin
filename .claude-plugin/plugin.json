@@ -1,9 +1,9 @@
 {
-  "name": "hoang-workflows",
-  "description": "Personal engineering workflow toolkit — prompt copilot, plugin discovery, workflow automation advisor, auto-devlog, and safety guardrails",
+  "name": "personal-tools",
+  "description": "Personal engineering workflow toolkit",
   "version": "1.0.0",
   "author": {
-    "name": "Hoang Ngo",
+    "name": "Hoang",
     "url": "https://github.com/ogngnaoh"
   },
   "repository": "https://github.com/ogngnaoh/workflow-plugins",
