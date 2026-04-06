@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "claude code plugins for meta workflows",
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "plugins": [
     {
       "name": "personal-tools",
       "source": "./",
       "description": "Personal engineering workflow toolkit",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Hoang",
         "url": "https://github.com/ogngnaoh"
