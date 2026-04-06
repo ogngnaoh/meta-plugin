@@ -1,4 +1,4 @@
-# hoang-workflows
+# my plugins
 
 Personal Claude Code plugin with workflow skills and safety hooks.
 
