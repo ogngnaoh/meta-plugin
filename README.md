@@ -32,10 +32,10 @@ Personal Claude Code plugin with workflow skills and safety hooks.
 **2. Install the plugin:**
 
 ```
-/plugin install hoang-workflows
+/plugin install personal-tools
 ```
 
-**3. Verify** by running `/plugin list` — you should see `hoang-workflows` listed.
+**3. Verify** by running `/plugin list` — you should see `personal-tools` listed.
 
 ## Skills Reference
 
