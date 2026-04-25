@@ -1,12 +1,12 @@
 {
-  "name": "personal-tools",
-  "description": "Personal engineering workflow toolkit",
-  "version": "1.0.1",
+  "name": "meta-plugin",
+  "description": "Meta-skills for deliberate skill consultation, dispatch, and execution",
+  "version": "2.0.0",
   "author": {
     "name": "Hoang",
     "url": "https://github.com/ogngnaoh"
   },
-  "repository": "https://github.com/ogngnaoh/workflow-plugins",
+  "repository": "https://github.com/ogngnaoh/meta-plugin",
   "license": "MIT",
-  "keywords": ["prompt-engineering", "devlog", "plugin-discovery", "workflow-automation", "safety"]
+  "keywords": ["meta-skills", "skill-orchestration", "consult", "dispatch", "safety"]
 }

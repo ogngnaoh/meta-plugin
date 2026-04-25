@@ -1,27 +1,27 @@
 {
-  "name": "my-plugins",
+  "name": "meta-plugin",
   "owner": {
     "name": "Hoang"
   },
   "metadata": {
-    "description": "claude code plugins for meta workflows",
-    "version": "1.0.1"
+    "description": "Meta-skills marketplace for deliberate skill orchestration",
+    "version": "2.0.0"
   },
   "plugins": [
     {
-      "name": "personal-tools",
+      "name": "meta-plugin",
       "source": "./",
-      "description": "Personal engineering workflow toolkit",
-      "version": "1.0.1",
+      "description": "Meta-skills for deliberate skill consultation, dispatch, and execution",
+      "version": "2.0.0",
       "author": {
         "name": "Hoang",
         "url": "https://github.com/ogngnaoh"
       },
-      "repository": "https://github.com/ogngnaoh/workflow-plugins",
+      "repository": "https://github.com/ogngnaoh/meta-plugin",
       "license": "MIT",
-      "keywords": ["prompt-engineering", "devlog", "plugin-discovery", "safety"],
+      "keywords": ["meta-skills", "skill-orchestration", "consult", "dispatch", "safety"],
       "category": "productivity",
-      "tags": ["personal", "workflows", "safety"]
+      "tags": ["meta", "skills", "orchestration", "safety"]
     }
   ]
 }
