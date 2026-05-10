@@ -1,6 +1,6 @@
 # meta-plugin
 
-Meta-skills for **deliberate orchestration of installed skills** — consult them as advisors, dispatch them across parallel subagents, or run them as procedural guides. Plus safety hooks that prevent leaks and destructive shell commands.
+Meta-skills for **deliberate orchestration of installed skills** — consult them as advisors, dispatch them across parallel subagents, or run them as procedural guides.
 
 The three meta-skills don't do work themselves; they coordinate the *other* skills you have installed so their domain expertise actually shapes how Claude answers and executes.
 
@@ -13,8 +13,6 @@ The three meta-skills don't do work themselves; they coordinate the *other* skil
 | `skill-consult` | Skill | Pools 3–5 relevant skills as consultants and synthesizes an answer to a question or trade-off |
 | `skill-dispatch` | Skill | Decomposes multi-domain work into 2–6 independent subtasks, each run by a parallel subagent loaded with its own skills |
 | `skill-run` | Skill | Loads 2–5 skills as procedural guides and executes a task under their active workflow |
-| `secrets-sentinel` | Hook | Blocks writes to secrets files (`.env`, keys, credentials) |
-| `danger-guard` | Hook | Confirms before running destructive shell and git commands |
 
 ## When to use which meta-skill
 
@@ -119,27 +117,6 @@ Use when work spans **multiple independent domains or lenses** and parallelism m
 
 **Dependency:** dispatch leans on `superpowers:dispatching-parallel-agents` for the spawn mechanics. If that skill isn't installed, dispatch will tell you and stop rather than silently fall back.
 
----
-
-## Hooks Reference
-
-### `secrets-sentinel`
-
-**Trigger:** PreToolUse on Edit, Write, Bash
-
-Blocks writes to sensitive files. Reads are allowed; template variants are allowed.
-
-- **Blocked patterns:** `.env`, `.env.*`, `credentials.json`, `secrets.json`, `service-account*.json`, `*.pem`, `*.key`, `*.p12`, `*.pfx`, `id_rsa`, `id_ed25519`
-- **Allowed exceptions:** `.env.example`, `.env.sample`, `.env.template`
-
-### `danger-guard`
-
-**Trigger:** PreToolUse on Bash
-
-Intercepts destructive commands and requires explicit confirmation before proceeding.
-
-- **Guarded:** `rm -rf` (except `node_modules`, `dist`, `build`, `__pycache__`, `.cache`, `coverage`), `git reset --hard`, `git push --force`, `git branch -D`, `DROP TABLE`, `DROP DATABASE`, `docker system prune`, `chmod 777`
-
 ## Updating
 
 ```
@@ -154,6 +131,5 @@ cd meta-plugin
 ```
 
 - Skills live in `skills/<skill-name>/SKILL.md`
-- Hooks live in `hooks/hooks.json`
 
 Reload Claude Code after editing.
