@@ -1,12 +1,12 @@
 {
   "name": "meta-plugin",
-  "description": "Meta-skills for deliberate skill consultation, dispatch, and execution, plus a vault-save utility for stashing Claude responses into an Obsidian vault",
-  "version": "2.2.0",
+  "description": "Meta-skills for deliberate skill consultation, dispatch, and execution, a doc-system skill for generating PRD/SPEC/CLAUDE.md, and a vault-save utility for stashing Claude responses into an Obsidian vault",
+  "version": "2.3.0",
   "author": {
     "name": "Hoang",
     "url": "https://github.com/ogngnaoh"
   },
   "repository": "https://github.com/ogngnaoh/meta-plugin",
   "license": "MIT",
-  "keywords": ["meta-skills", "skill-orchestration", "consult", "dispatch", "vault", "obsidian"]
+  "keywords": ["meta-skills", "skill-orchestration", "consult", "dispatch", "vault", "obsidian", "documentation", "prd", "spec", "claude-md"]
 }

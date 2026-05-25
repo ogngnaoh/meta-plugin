@@ -1,8 +1,8 @@
 # meta-plugin
 
-Meta-skills for **deliberate orchestration of installed skills** — consult them as advisors, dispatch them across parallel subagents, or run them as procedural guides. Plus `vault-save`, a personal-utility skill for bookmarking useful Claude responses into an Obsidian vault without leaving the terminal.
+Meta-skills for **deliberate orchestration of installed skills** — consult them as advisors, dispatch them across parallel subagents, or run them as procedural guides. Plus `doc-system`, a manually-invoked skill for generating `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow, and `vault-save`, a personal-utility skill for bookmarking useful Claude responses into an Obsidian vault without leaving the terminal.
 
-The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do work themselves; they coordinate the *other* skills you have installed so their domain expertise actually shapes how Claude answers and executes. `vault-save` is the odd one out — it doesn't orchestrate anything; it captures and persists conversation output.
+The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do work themselves; they coordinate the *other* skills you have installed so their domain expertise actually shapes how Claude answers and executes. `doc-system` and `vault-save` are the odd ones out — they don't orchestrate anything; `doc-system` generates canonical project docs, `vault-save` captures and persists conversation output.
 
 > **Prerequisite (orchestration trio):** the three meta-skills get their value from the skills they orchestrate. Install at least a few domain or process skill packs (e.g. `superpowers`, `feature-dev`, `plugin-dev`, language/framework packs) first — otherwise there's nothing to consult, run, or dispatch. `skill-dispatch` specifically requires `superpowers:dispatching-parallel-agents`.
 
@@ -13,6 +13,7 @@ The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do
 | `skill-consult` | Skill | Pools 3–5 relevant skills as consultants and synthesizes an answer to a question or trade-off |
 | `skill-dispatch` | Skill | Decomposes multi-domain work into 2–6 independent subtasks, each run by a parallel subagent loaded with its own skills |
 | `skill-run` | Skill | Loads 2–5 skills as procedural guides and executes a task under their active workflow |
+| `doc-system` | Skill | Generates `PRD.md` / `SPEC.md` / `CLAUDE.md` for a Claude-Code-driven project via interview, optional brownfield inventory, and a pre-flight quality gate |
 | `vault-save` | Skill | Captures the most recent assistant response and writes it as a dated markdown note (with git-branch provenance) into an Obsidian vault |
 
 ## When to use which skill
@@ -21,6 +22,7 @@ The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do
 Question / trade-off / "what should I…"   →  skill-consult
 Single-domain task to actually DO         →  skill-run
 Multi-domain / parallel investigation     →  skill-dispatch
+Generate PRD / SPEC / CLAUDE.md docs      →  doc-system
 Bookmark this response into the vault     →  vault-save
 ```
 
@@ -154,6 +156,26 @@ Fuzzy-matches the subfolder argument against existing folders (e.g. `research` �
 
 **Don't use for** orchestrating other skills — that's what the trio is for. `vault-save` is just a persistence helper.
 
+## Content generation
+
+### `doc-system`
+
+Use when you need to **generate or refresh the canonical project docs** that a Claude-Code-driven solo project leans on: `PRD.md` (what + why, tech-agnostic), `SPEC.md` (architecture + alternatives + cross-cutting concerns + rollout), and `CLAUDE.md` (commands, stack, conventions, gotchas for Claude Code sessions). One, two, or all three on request.
+
+**Trigger phrases / patterns:**
+- "write me a CLAUDE.md", "I need a PRD and SPEC for this feature"
+- "set up docs for my new project", "draft a PRD for X"
+- Any request to produce/refresh PRD / SPEC / CLAUDE.md for a repo.
+
+**What it does:** Detects which of the three docs you want, then gathers context based on how you invoked it — greenfield (no inventory), brownfield (dispatches a general-purpose subagent to inventory the repo first), or pointed-at-files (reads only what you handed it). Interviews to fill remaining gaps using `AskUserQuestion`-style options where the answer space is small. Drafts each requested doc, then runs a hard pre-flight quality gate (`references/quality-gate.md`) — failing checks become explicit `[NEEDS CLARIFICATION: ...]` markers rather than silent omissions. Emits to `./PRD.md` / `./SPEC.md` / `./CLAUDE.md` at repo root. Never overwrites an existing doc without confirmation.
+
+**Example:**
+```
+set up PRD, SPEC, and CLAUDE.md for this new analytics service
+```
+
+**Don't use for** session-volatile artifacts (`handoff.md`, `plan.md`, `tasks.md`, `milestone.md`, files under `agent_docs/`) — those are synthesized mid-flight by Claude Code, not produced by this skill. The skill embeds *conventions* for these inside CLAUDE.md so Claude Code shapes them well when the time comes, but doesn't pre-create them. Also not a substitute for ADRs; architectural rationale lives in SPEC's mandatory "Alternatives Considered" section.
+
 ## Updating
 
 ```
@@ -167,6 +189,6 @@ git clone https://github.com/ogngnaoh/meta-plugin
 cd meta-plugin
 ```
 
-- Skills live in `skills/<skill-name>/SKILL.md`
+- Skills live in `skills/<skill-name>/SKILL.md`, with an optional `references/` subfolder for templates and longer-form material loaded on demand (see `skills/doc-system/`)
 
 Reload Claude Code after editing.
