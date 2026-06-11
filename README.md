@@ -1,8 +1,8 @@
 # meta-plugin
 
-Meta-skills for **deliberate orchestration of installed skills** — consult them as advisors, dispatch them across parallel subagents, or run them as procedural guides. Plus `doc-system`, a manually-invoked skill for generating `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow, and `vault-save`, a personal-utility skill for bookmarking useful Claude responses into an Obsidian vault without leaving the terminal.
+Meta-skills for **deliberate orchestration of installed skills** — consult them as advisors, dispatch them across parallel subagents, or run them as procedural guides. Plus `doc-system`, a manually-invoked skill for generating `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow, `system-explain`, a learning skill that breaks any architecture or system design down to first-principles concepts, and `vault-save`, a personal-utility skill for bookmarking useful Claude responses into an Obsidian vault without leaving the terminal.
 
-The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do work themselves; they coordinate the *other* skills you have installed so their domain expertise actually shapes how Claude answers and executes. `doc-system` and `vault-save` are the odd ones out — they don't orchestrate anything; `doc-system` generates canonical project docs, `vault-save` captures and persists conversation output.
+The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do work themselves; they coordinate the *other* skills you have installed so their domain expertise actually shapes how Claude answers and executes. `doc-system`, `system-explain`, and `vault-save` are the odd ones out — they don't orchestrate anything; `doc-system` generates canonical project docs, `system-explain` teaches the concepts behind a pasted design, `vault-save` captures and persists conversation output.
 
 > **Prerequisite (orchestration trio):** the three meta-skills get their value from the skills they orchestrate. Install at least a few domain or process skill packs (e.g. `superpowers`, `feature-dev`, `plugin-dev`, language/framework packs) first — otherwise there's nothing to consult, run, or dispatch. `skill-dispatch` specifically requires `superpowers:dispatching-parallel-agents`.
 
@@ -14,6 +14,7 @@ The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do
 | `skill-dispatch` | Skill | Decomposes multi-domain work into 2–6 independent subtasks, each run by a parallel subagent loaded with its own skills |
 | `skill-run` | Skill | Loads 2–5 skills as procedural guides and executes a task under their active workflow |
 | `doc-system` | Skill | Generates `PRD.md` / `SPEC.md` / `CLAUDE.md` for a Claude-Code-driven project via interview, optional brownfield inventory, and a pre-flight quality gate |
+| `system-explain` | Skill | Explains the foundational system-design concepts behind a pasted architecture, blog, or code from first principles — concept map, causal deep-dives, binding-constraint synthesis |
 | `vault-save` | Skill | Captures the most recent assistant response and writes it as a dated markdown note (with git-branch provenance) into an Obsidian vault |
 
 ## When to use which skill
@@ -23,6 +24,7 @@ Question / trade-off / "what should I…"   →  skill-consult
 Single-domain task to actually DO         →  skill-run
 Multi-domain / parallel investigation     →  skill-dispatch
 Generate PRD / SPEC / CLAUDE.md docs      →  doc-system
+"Explain the concepts behind this design" →  system-explain
 Bookmark this response into the vault     →  vault-save
 ```
 
@@ -175,6 +177,25 @@ set up PRD, SPEC, and CLAUDE.md for this new analytics service
 ```
 
 **Don't use for** session-volatile artifacts (`handoff.md`, `plan.md`, `tasks.md`, `milestone.md`, files under `agent_docs/`) — those are synthesized mid-flight by Claude Code, not produced by this skill. The skill embeds *conventions* for these inside CLAUDE.md so Claude Code shapes them well when the time comes, but doesn't pre-create them. Also not a substitute for ADRs; architectural rationale lives in SPEC's mandatory "Alternatives Considered" section.
+
+---
+
+### `system-explain`
+
+Use when you've **pasted an architecture, system design, tech blog, or code** and want the foundational concepts behind it explained from first principles — for your own learning, not for execution.
+
+**Trigger phrases / patterns:**
+- "explain the concepts behind this", "break this design down"
+- "help me understand why this works", "what's actually going on here"
+
+**What it does:** Detects the system-design concepts the input touches (`CONCEPTS DETECTED` map), then deep-dives each with a fixed causal template — what it is, why it *must* exist (derived from physics, economics, or impossibility results like CAP/PACELC/FLP), the trade-off it costs, how *this* input uses it, and what breaks at 10×/100×. Closes by naming the single **binding constraint** the whole design is downstream of. Backed by a bundled first-principles framework (`references/system-design-framework.md`); supplements with broader knowledge and web search where it helps. Pure explainer — it never quizzes or drills.
+
+**Example:**
+```
+explain the concepts behind this: Cassandra + write-through Redis cache + consistent hashing, multi-region
+```
+
+**Don't use for** doing design work or making decisions — it teaches the concepts in something you hand it. For "what should I pick?" trade-offs, use `skill-consult`.
 
 ## Updating
 

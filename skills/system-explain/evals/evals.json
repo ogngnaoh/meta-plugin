@@ -1,0 +1,50 @@
+{
+  "skill_name": "system-explain",
+  "evals": [
+    {
+      "id": 0,
+      "name": "kafka-async-decoupling",
+      "prompt": "At work we just refactored our checkout flow. The order service used to call the email service and the analytics service directly over HTTP, but now it just publishes an `order.placed` event to a Kafka topic and those two services consume it on their own. My tech lead keeps saying this is 'more decoupled' but I want to actually understand the foundational concepts behind why — like what's really going on and what we're trading away. Can you break it down so I learn it properly?",
+      "expected_output": "A concept map (async/queue messaging, temporal+load+failure decoupling, eventual consistency, idempotency/backpressure), each concept derived from a first principle (synchronous request/response couples services in time, load, and failure), trade-offs named, tied to the Kafka/order/email/analytics specifics, ending with a single binding-constraint synthesis. No quizzing.",
+      "files": [],
+      "expectations": [
+        "Opens with a concept map that lists the foundational system-design concepts present in the input before explaining any of them in depth.",
+        "Derives WHY async/queue decoupling exists by tracing it to the temporal, load, and failure coupling of synchronous request/response — a first-principles cause, not just 'it's decoupled'.",
+        "Explicitly names the trade-off or cost of each major concept (e.g. eventual consistency, harder debugging, need for idempotent consumers).",
+        "Ties the explanation to THIS input (Kafka topic, order.placed, email + analytics consumers), not just generic definitions.",
+        "Ends with a synthesis that identifies a single binding constraint and shows the other choices following from it.",
+        "Does NOT quiz the user or end with active-recall questions directed at them."
+      ]
+    },
+    {
+      "id": 1,
+      "name": "readheavy-cache-replicas",
+      "prompt": "Trying to level up my system design knowledge. Here's our current architecture for the product catalog: a single Postgres primary with 3 read replicas, and a Redis cache in front using cache-aside for the hot product pages. Reads outnumber writes by maybe 50 to 1. Walk me through the foundational system-design concepts at play here, from first principles — I don't just want 'it's faster', I want to understand why each piece exists and what it costs.",
+      "expected_output": "Concept map (single-leader replication, read replicas, cache-aside, latency hierarchy, read-vs-write asymmetry), each derived from first principles (latency hierarchy, single-node read ceiling), trade-offs named (replication lag, staleness, cold-start), tied to the Postgres/Redis/50:1 specifics, ending with a single binding-constraint synthesis. No quizzing.",
+      "files": [],
+      "expectations": [
+        "Opens with a concept map that lists the foundational system-design concepts present in the input before explaining any of them in depth.",
+        "Derives WHY caching and read replicas exist from first principles — the latency hierarchy (memory vs disk vs network) and the single-node read ceiling — rather than only describing them.",
+        "Explicitly names the trade-off or cost of each major concept (e.g. replication lag / read-your-writes, cache staleness, cold-start misses).",
+        "Ties the explanation to THIS input (Postgres primary, 3 read replicas, Redis cache-aside, 50:1 read:write), not just generic definitions.",
+        "Ends with a synthesis that identifies a single binding constraint (the read-heavy load on the DB read path) and shows the other choices following from it.",
+        "Does NOT quiz the user or end with active-recall questions directed at them."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "sharding-consistent-hashing",
+      "prompt": "Found this line in our API gateway: `shard = hash(user_id) % NUM_SHARDS` — that's how we pick which database shard to write a user's data to. Someone on the team opened a PR to replace it with 'consistent hashing' and I don't really get why. Help me understand the actual concepts here so I can review the PR intelligently.",
+      "expected_output": "Concept map (sharding/partitioning, hash partitioning, the resharding problem with mod N, consistent hashing, hot keys), each derived from first principles (single-machine write/storage ceiling; why mod N remaps almost all keys on N change), trade-offs named, tied to the hash(user_id) % NUM_SHARDS line and the PR, ending with a single binding-constraint synthesis. No quizzing.",
+      "files": [],
+      "expectations": [
+        "Opens with a concept map that lists the foundational system-design concepts present in the input before explaining any of them in depth.",
+        "Derives WHY sharding exists from the single-machine write/storage ceiling, and WHY hash(key) % N is problematic — changing N remaps almost every key — from first principles.",
+        "Explains how consistent hashing limits key movement when nodes are added/removed, and names its cost/trade-off.",
+        "Ties the explanation to THIS input (the `hash(user_id) % NUM_SHARDS` line and the resharding implication for the PR), not just generic definitions.",
+        "Ends with a synthesis that identifies a single binding constraint and shows the other choices following from it.",
+        "Does NOT quiz the user or end with active-recall questions directed at them."
+      ]
+    }
+  ]
+}
