@@ -1,18 +1,11 @@
 # meta-plugin
 
-Meta-skills for **deliberate orchestration of installed skills** — consult them as advisors, dispatch them across parallel subagents, or run them as procedural guides. Plus `doc-system`, a manually-invoked skill for generating `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow, `system-explain`, a learning skill that breaks any architecture or system design down to first-principles concepts, and `vault-save`, a personal-utility skill for bookmarking useful Claude responses into an Obsidian vault without leaving the terminal. And `agent-team`, a skill that scaffolds and orchestrates an adaptive, role-based agent team — designing the team topology to fit the task and running it through a human-gated refine → review loop, with single-responsibility teammates backed by real subagent definitions.
-
-The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do work themselves; they coordinate the *other* skills you have installed so their domain expertise actually shapes how Claude answers and executes. `doc-system`, `system-explain`, and `vault-save` are the odd ones out — they don't orchestrate anything; `doc-system` generates canonical project docs, `system-explain` teaches the concepts behind a pasted design, `vault-save` captures and persists conversation output.
-
-> **Prerequisite (orchestration trio):** the three meta-skills get their value from the skills they orchestrate. Install at least a few domain or process skill packs (e.g. `superpowers`, `feature-dev`, `plugin-dev`, language/framework packs) first — otherwise there's nothing to consult, run, or dispatch. `skill-dispatch` specifically requires `superpowers:dispatching-parallel-agents`.
+A small collection of meta-skills for Claude Code. `agent-team` scaffolds and orchestrates an adaptive, role-based agent team — designing the team topology to fit the task and running it through a human-gated refine → review loop, with single-responsibility teammates backed by real subagent definitions. `doc-system` generates `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow. `system-explain` breaks any architecture or system design down to first-principles concepts. `vault-save` bookmarks useful Claude responses into an Obsidian vault without leaving the terminal.
 
 ## Components
 
 | Name | Type | Purpose |
 |------|------|---------|
-| `skill-consult` | Skill | Pools 3–5 relevant skills as consultants and synthesizes an answer to a question or trade-off |
-| `skill-dispatch` | Skill | Decomposes multi-domain work into 2–6 independent subtasks, each run by a parallel subagent loaded with its own skills |
-| `skill-run` | Skill | Loads 2–5 skills as procedural guides and executes a task under their active workflow |
 | `agent-team` | Skill | Scaffolds and orchestrates an adaptive role-based agent team (Scout/Builder/Reviewer; split to Critic+Evaluator on stakes; Synthesizer/Integrator as needed) through a human-gated refine→review loop, designing the team topology to fit the task |
 | `doc-system` | Skill | Generates `PRD.md` / `SPEC.md` / `CLAUDE.md` for a Claude-Code-driven project via interview, optional brownfield inventory, and a pre-flight quality gate |
 | `system-explain` | Skill | Explains the foundational system-design concepts behind a pasted architecture, blog, or code from first principles — concept map, causal deep-dives, binding-constraint synthesis |
@@ -21,21 +14,11 @@ The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do
 ## When to use which skill
 
 ```
-Question / trade-off / "what should I…"   →  skill-consult
-Single-domain task to actually DO         →  skill-run
-Multi-domain / parallel investigation     →  skill-dispatch
 Orchestrate a persistent multi-agent team  →  agent-team
-Generate PRD / SPEC / CLAUDE.md docs      →  doc-system
-"Explain the concepts behind this design" →  system-explain
-Bookmark this response into the vault     →  vault-save
+Generate PRD / SPEC / CLAUDE.md docs       →  doc-system
+"Explain the concepts behind this design"  →  system-explain
+Bookmark this response into the vault      →  vault-save
 ```
-
-A quick mental model:
-
-- **consult** — skills are *advisors*. You ask, they weigh in, you synthesize the answer.
-- **run** — skills are *procedures*. You load them, then execute the task by following their workflows.
-- **dispatch** — skills are *equipment for parallel workers*. You fan out, each subagent loads its own subset, you synthesize the returns.
-- **vault-save** — not an orchestrator. A small utility that writes the last assistant response into your Obsidian vault as a dated markdown note.
 
 ## Installation
 
@@ -82,70 +65,6 @@ Use when a task is **substantial enough to warrant a persistent, role-based agen
 ```
 
 **Don't use for** a single quick delegation, a one-shot parallel fan-out, a pure question, or a trivial one-file edit — a team's ~7× token cost only pays off on high-value, parallelizable, or larger-than-one-context work.
-
----
-
-### `skill-consult`
-
-Use when you have a **question, decision, or trade-off** and you want pooled domain expertise rather than generic reasoning.
-
-**Trigger phrases / patterns:**
-- `/skill-consult <question>`
-- "interview me on X", "help me think through Y"
-- "X vs Y?", "what should I pick for…", architectural decisions, library/tool choices, debugging strategies
-
-**What it does:** Picks 3–5 genuinely relevant installed skills, loads them as *consultants* (not executors), and synthesizes an answer. In **interview mode** (when phrasing implies a decision), it asks MCQ-style clarifying questions citing which skill informs each option, capped at 2 rounds. Ends with a `Consulted:` footer naming the skills used.
-
-**Example:**
-```
-/skill-consult should we use Polars or DuckDB for a 200M-row analytics workload?
-```
-
-**Don't use for** actionable tasks (use `skill-run`) or multi-domain parallel work (use `skill-dispatch`).
-
----
-
-### `skill-run`
-
-Use when you want a **task actually done** and specialized skill workflows should shape execution.
-
-**Trigger phrases / patterns:**
-- `/skill-run <task>`
-- "implement…", "refactor…", "plan a feature for…", "review this PR…"
-- Any procedural task where a skill's prescribed workflow beats general defaults.
-
-**What it does:** Picks 2–5 skills whose workflows actively change *how* the work is done — process skills first (planning, TDD, debugging), domain skills second. Loads them, follows their procedures, honors their checkpoints (e.g. plan-approval, brainstorming sign-off, failing-test gates). Ends with an `Applied:` footer naming the skills used.
-
-**Example:**
-```
-/skill-run plan and implement a rate-limiting middleware for the FastAPI service
-```
-
-**Don't use for** pure questions (use `skill-consult`) or multi-domain parallel work (use `skill-dispatch`).
-
----
-
-### `skill-dispatch`
-
-Use when work spans **multiple independent domains or lenses** and parallelism makes sense.
-
-**Trigger phrases / patterns:**
-- `/skill-dispatch <task>`
-- "audit X for security + perf + tests"
-- "compare libraries A, B, C"
-- "plan backend + frontend + data pipeline"
-- Anything described as "in parallel".
-
-**What it does:** Decomposes the task into 2–6 independent subtasks, picks 1–4 skills per subtask, then delegates the actual concurrent dispatch to `superpowers:dispatching-parallel-agents`. Each subagent runs with its own skills loaded. When all return, it synthesizes — surfacing cross-cutting issues, contradictions, gaps, and priorities. Ends with a `Dispatched:` footer mapping subtasks to skills.
-
-**Example:**
-```
-/skill-dispatch audit src/api/ for security, performance, and test coverage in parallel
-```
-
-**Don't use for** single-domain work, sequentially dependent steps, or pure questions.
-
-**Dependency:** dispatch leans on `superpowers:dispatching-parallel-agents` for the spawn mechanics. If that skill isn't installed, dispatch will tell you and stop rather than silently fall back.
 
 ---
 
@@ -218,7 +137,7 @@ Use when you've **pasted an architecture, system design, tech blog, or code** an
 explain the concepts behind this: Cassandra + write-through Redis cache + consistent hashing, multi-region
 ```
 
-**Don't use for** doing design work or making decisions — it teaches the concepts in something you hand it. For "what should I pick?" trade-offs, use `skill-consult`.
+**Don't use for** doing design work or making decisions — it teaches the concepts in something you hand it, not what to pick.
 
 ## Updating
 
