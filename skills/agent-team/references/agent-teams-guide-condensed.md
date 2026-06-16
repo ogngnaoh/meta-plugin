@@ -23,9 +23,9 @@ The defining line: **subagents only report back to the lead and never talk to ea
 ## Patterns this skill is built from
 
 - **Orchestrator–worker** *(§3.1)* — lead decomposes, delegates to workers, synthesizes. The backbone of this skill.
-- **Evaluator–optimizer / fresh-context critic** *(§3.3)* — a separate, fresh-context agent reviews work it didn't write, so it isn't biased toward it. Two cautions, both baked into this skill: don't let the critic run wild (flag only correctness/requirement issues), and have agents *show evidence* rather than assert success. This is exactly the Critic + Evaluator split.
+- **Evaluator–optimizer / fresh-context critic** *(§3.3)* — a separate, fresh-context agent reviews work it didn't write, so it isn't biased toward it. Two cautions, both baked into this skill: don't let the critic run wild (flag only correctness/requirement issues), and have agents *show evidence* rather than assert success. This is the skill's Review phase — a merged Reviewer by default, split into a separate Critic + Evaluator on stakes.
 - **Parallel fan-out** *(§3.2)* — independent reads/searches at once (Scouts, Critics by dimension). Works only when paths don't conflict.
-- **Sequential pipeline** *(§3.4)* — fixed dependent steps, optional gate between them. The Build → Critique → Evaluate spine.
+- **Sequential pipeline** *(§3.4)* — fixed dependent steps, optional gate between them. The Build → Review spine (split into a Critic + Evaluator on stakes).
 
 ## Sizing & cost
 

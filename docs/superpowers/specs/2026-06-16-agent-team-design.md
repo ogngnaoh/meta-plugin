@@ -25,7 +25,7 @@ A manually-invoked Claude Code skill that, given an arbitrary task, **scaffolds 
 
 | Archetype | Shape | For |
 |---|---|---|
-| **Gated build/refine** *(default)* | Scout → Build → Critique → Evaluate, looped, 2 gates | producing a work product to a quality bar |
+| **Gated build/refine** *(default)* | Scout → Build → Review, looped, 2 gates | producing a work product to a quality bar |
 | **Research fan-out** | parallel Scouts/Researchers → Synthesizer → light verify | breadth-first investigation / comparisons |
 | **Parallel slice build** | lead pins the contract/interfaces → N Builders own interdependent slices (dependencies tracked) → integrate → critique/evaluate | complex multi-component features whose slices touch |
 | **Pipeline** | brainstorm → plan → build → verify, sequential with gates between stages | staged, dependent work |
@@ -85,7 +85,7 @@ Missing any one causes drift (Anthropic multi-agent-research finding).
 
 **Fixed — invariants that hold across ALL archetypes:** Phase 0 scoping + topology design before any spawn · both human gates (plan A + ship B) · orchestrator-only lead (self-imposed no-edit) · every spawn carries the 4-part contract · teammates backed by real agent definitions with tool whitelists · artifacts-to-disk + file-reference hand-offs · single-responsibility roles · a loop cap for iterative archetypes · the Critic (when present) sees only diff+criteria · the Evaluator (when present) shows evidence.
 
-**Configurable — designed per task in Phase 0:** the **team archetype / topology** · the **coordination tier** · acceptance criteria *(the critical input)* · roles + counts (skip Scout; collapse Critic+Evaluator to a Reviewer; N parallel/interdependent Builders; add Synthesizer/Integrator) · # parallel scouts/critics + dimensions · model tier per role · loop cap · worktree isolation.
+**Configurable — designed per task in Phase 0:** the **team archetype / topology** · the **coordination tier** · acceptance criteria *(the critical input)* · roles + counts (skip Scout; merged Reviewer by default, split into Critic+Evaluator on stakes; N parallel/interdependent Builders; add Synthesizer/Integrator) · # parallel scouts/critics + dimensions · model tier per role · loop cap · worktree isolation.
 
 ## Pitfalls baked into the skill (mitigations)
 
