@@ -1,0 +1,79 @@
+{
+  "skill_name": "agent-team",
+  "evals": [
+    {
+      "id": 0,
+      "name": "kafka-dlq-feature",
+      "prompt": "/agent-team add a dead-letter-queue handler to our Kafka consumer. I need a new handler module, it wired into the existing consumer loop, and integration tests. A poisoned message should land in the DLQ after 3 failed retries and the consumer should keep draining the rest of the partition.",
+      "expected_output": "A Scope/Interview that designs the team topology AND pins explicit, testable acceptance criteria, asking clarifying questions before spawning anyone. It recognizes this fits the DEFAULT gated build/refine archetype — one coherent artifact to a quality bar — rather than forcing a research fan-out or parallel slice build. Then a Scout→GATE A plan, a Builder that produces the code, and a fresh-context Reviewer given only diff+criteria that finds correctness/requirement flaws with severity then renders pass/fail with evidence (the actual test output) — a non-blocking flaw still passes — looping under a cap, and a final GATE B ship approval — the lead orchestrating throughout, never writing the code itself. The review stays MERGED (a single Reviewer, not split into Critic + Evaluator): a DLQ feature gated on tests-pass is a mechanical, non-high-stakes criterion, so the merged Reviewer is the right default.",
+      "files": [],
+      "expectations": [
+        "Runs a Scope/Interview that designs the team topology (selecting the default gated build/refine archetype as the fit) AND establishes explicit, testable acceptance criteria (e.g. 'poisoned message in DLQ after 3 retries', 'consumer keeps draining') and asks clarifying questions BEFORE spawning any teammate.",
+        "Scaffolds role-based teammates each with a tool whitelist, a model tier, a read-only/edit boundary, and a full 4-part spawn contract (objective, output format, tools/sources, boundaries).",
+        "Keeps the lead orchestrator-only — it decomposes, routes, and synthesizes but does NOT author the handler code itself; the Builder produces the work product.",
+        "Runs the Build→Review loop with both human gates (GATE A on the plan, GATE B on ship), a hard loop cap, and escalation if the cap is hit.",
+        "Defaults to a single fresh-context Reviewer given only the diff + acceptance criteria (not the Builder's reasoning) that finds correctness/requirement flaws with severity AND renders pass/fail with evidence (actual test output) — a non-blocking flaw still passes. It does NOT split into a separate Critic + Evaluator: a DLQ feature gated on mechanical criteria (tests pass) doesn't meet the high-stakes / large-finding-set bar that warrants the split.",
+        "Does not ship autonomously — it terminates only after the user approves at GATE B."
+      ]
+    },
+    {
+      "id": 1,
+      "name": "vector-db-decision-memo",
+      "prompt": "/agent-team research and write a decision memo comparing pgvector, Qdrant, and Pinecone for our RAG workload — roughly 10M vectors, p95 retrieval under 50ms, and we'd prefer to self-host. I want a recommendation we can defend.",
+      "expected_output": "Recognizes a breadth-first research task with no single artifact to 'build', and designs the RESEARCH FAN-OUT archetype rather than the default gated build loop: after interviewing for acceptance criteria (what makes the memo 'defensible' — covers latency-at-scale, self-host cost, operational maturity, a clear recommendation) and a GATE-A research plan, it fans out parallel read-only Scouts/Researchers (one per database) whose reports a Synthesizer merges into one coherent memo — surfacing contradictions and gaps across sources rather than concatenating — followed by a light verify against the criteria (a single Reviewer checking the memo, not a full Build→Review loop on a diff). Gated by GATE B. The fixed invariants still hold across this non-default shape.",
+      "files": [],
+      "expectations": [
+        "Runs a Scope/Interview that designs the topology AND nails down explicit acceptance criteria for a non-code deliverable (the memo must cover the stated constraints and yield a defensible recommendation) before spawning anyone.",
+        "Designs a RESEARCH FAN-OUT topology, not the default gated build loop: parallel read-only Scouts/Researchers (one per database option) whose outputs a Synthesizer merges into one coherent memo — surfacing where sources disagree or leave gaps rather than concatenating.",
+        "Treats the work product as docs/research, not code — the lead only orchestrates and synthesizes (routing authoring to the Synthesizer/Builder), never writing the memo itself.",
+        "Keeps the fixed invariants regardless of archetype: a 4-part spawn contract on every teammate, GATE A on the research plan/axes before the fan-out and GATE B on ship, and a loop cap on any iterative stage.",
+        "Verifies the memo against the acceptance criteria with evidence (each axis addressed, claims sourced) rather than asserting it is good.",
+        "Never ships the memo autonomously — it stops for GATE-B approval."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "rename-config-flag-small",
+      "prompt": "/agent-team rename the FEATURE_X_ENABLED config flag to FEATURE_CHECKOUT_V2 everywhere in the repo and update the docs that mention it.",
+      "expected_output": "Right-sizes both topology and headcount to a small, well-understood task: stays in the default gated archetype but trims it — skips the Scout, keeps one Builder, and uses the default single Reviewer. The merged Reviewer is the DEFAULT here, NOT a size-based collapse: a mechanical rename gated on 'zero remaining references' is exactly the mechanical-criteria case where the merged Reviewer is plenty and splitting into a separate Critic + Evaluator would be wasted (low stakes, small finding-set). Notes this is near the floor where a lone agent would do. Still keeps the non-negotiables — interview for acceptance criteria (all references renamed, nothing missed, docs updated), the 4-part contract, the lead staying orchestrator-only, a loop cap, and both gates.",
+      "files": [],
+      "expectations": [
+        "Scales DOWN to match low complexity — keeps the default archetype, skips the optional Scout, and uses the default single Reviewer (NOT splitting into a separate Critic + Evaluator: the rename's criteria are mechanical, so the merged Reviewer is correct — and it is the default, not a size-based collapse) — rather than over-spawning the full roster or over-designing a heavier topology.",
+        "Notes that this task is near the single-agent floor (a team's overhead and ~7× token cost may not pay off) while still running the requested team leanly.",
+        "Keeps the fixed guarantees despite the smaller team: explicit acceptance criteria set in the interview, a 4-part spawn contract, the lead orchestrator-only (the Builder does the rename), a loop cap, and both human gates.",
+        "Has the Reviewer verify with evidence (e.g. a grep showing zero remaining FEATURE_X_ENABLED references) rather than asserting the rename is complete.",
+        "Does not ship without GATE-B approval."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "monolith-billing-extraction",
+      "prompt": "/agent-team extract the billing module out of our monolith into its own package — move the code, split the tests, and update imports across about 40 call sites. This is a big one.",
+      "expected_output": "Recognizes a large multi-component migration whose slices touch, and designs the PARALLEL SLICE BUILD archetype: after interviewing for criteria, the lead pins the new package's public surface (the contract) first, then maps slice ownership and dependency order (the import-update slice blockedBy the code-move slice) → GATE A. It runs parallel Builders with strict file ownership or worktree isolation (never two on the same file), then an Integrator assembles the slices and runs the full suite across all call sites with evidence. Because a billing migration is high-blast-radius and irreversible, the review is SPLIT into a separate Critic (finds flaws, diff+criteria only) + Evaluator (independently gates with evidence) — the stakes-based escalation, not the default merged Reviewer — looped under a cap; on hitting the cap it stops and escalates. Picks the smallest coordination tier that works (tier-1 lead-mediated/contract-first with blockedBy dependency tracking) and cross-references the ladder (subagents → experimental agent-teams → dynamic workflow).",
+      "files": [],
+      "expectations": [
+        "Designs a PARALLEL SLICE BUILD topology — pins the new package's contract/interfaces first and maps slice ownership plus dependency order before committing to the expensive migration — with a Scout pass and a GATE-A plan on the contract.",
+        "Uses parallel Builders ONLY with strict file ownership or worktree isolation — never two Builders editing the same file — and tracks cross-slice dependencies (e.g. the import-update slice blockedBy the code-move slice) on the lead's shared task list.",
+        "Assembles the slices through an Integrator that resolves seams against the pinned contract and runs the build/test suite across all ~40 call sites, showing real output as evidence.",
+        "Picks the smallest coordination tier that works (tier-1 contract-first) and cross-references the escalation ladder (subagents → experimental agent-teams → dynamic workflows), climbing only if the tier-1 constraint actually bites.",
+        "Enforces the loop cap and both gates; because a billing migration is high-blast-radius/irreversible it SPLITS the review into a separate Critic (diff+criteria, correctness/requirement findings) and Evaluator (pass/fail with evidence) — the stakes-based escalation — keeping finder distinct from gate-keeper; on cap without a pass, stops and escalates instead of looping indefinitely.",
+        "Terminates only on the user's GATE-B ship approval; never ships autonomously."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "realtime-notifications-multicomponent",
+      "prompt": "/agent-team build a real-time notifications feature end-to-end: a backend WebSocket service, a shared event-schema package that both sides import, and a frontend client that subscribes and renders. The backend, schema, and client all have to agree on the event shape.",
+      "expected_output": "Recognizes interdependent components that share a contract, and designs the PARALLEL SLICE BUILD archetype with explicit coordination: the lead pins the shared event-schema (the contract) first → GATE A → parallel Builders for the backend and client work against the pinned schema under strict file ownership, with the schema slice tracked as a dependency the others are blockedBy → an Integrator wires the pieces and runs an end-to-end integration check with evidence → review (the default single Reviewer over the integrated whole; this is a greenfield feature, not high-blast-radius, so splitting into a separate Critic + Evaluator is the available high-stakes escalation but not required) → GATE B. It defaults to tier-1 lead-mediated/contract-first coordination and treats the experimental peer-to-peer mailbox (tier-2) as a documented escalation only if the schema must be renegotiated live — preferring to pin it up front rather than escalate by default.",
+      "files": [],
+      "expectations": [
+        "Designs a PARALLEL SLICE BUILD topology (not a single sequential Builder and not a research fan-out): pins the shared event-schema/API contract before any component is built, and runs GATE A on that contract + the plan.",
+        "Runs parallel Builders for the independent components (backend, client) against the pinned contract under strict file ownership, with the shared-schema slice tracked as a dependency (blockedBy) the others wait on.",
+        "Defaults to tier-1 lead-mediated/contract-first coordination and treats the experimental peer-to-peer mailbox (tier-2) as a documented escalation only when the contract must be negotiated live — preferring to pin it up front rather than escalate by default.",
+        "Assembles via an Integrator that resolves the seams and runs integration checks (e.g. an end-to-end event round-trip) with real output as evidence — not two Builders reaching into each other's files.",
+        "Keeps the fixed invariants across this non-default shape: Phase 0 topology + criteria before any spawn, a 4-part spawn contract, GATE A on the contract/plan and GATE B on ship, a loop cap, and a fresh-context review that sees only diff+criteria and shows evidence (defaulting to the single Reviewer over the integrated whole — splitting into a separate Critic + Evaluator is the high-stakes escalation, available but not required for a greenfield feature).",
+        "Never ships autonomously — it terminates only after GATE-B approval."
+      ]
+    }
+  ]
+}

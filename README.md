@@ -1,6 +1,6 @@
 # meta-plugin
 
-Meta-skills for **deliberate orchestration of installed skills** — consult them as advisors, dispatch them across parallel subagents, or run them as procedural guides. Plus `doc-system`, a manually-invoked skill for generating `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow, `system-explain`, a learning skill that breaks any architecture or system design down to first-principles concepts, and `vault-save`, a personal-utility skill for bookmarking useful Claude responses into an Obsidian vault without leaving the terminal.
+Meta-skills for **deliberate orchestration of installed skills** — consult them as advisors, dispatch them across parallel subagents, or run them as procedural guides. Plus `doc-system`, a manually-invoked skill for generating `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow, `system-explain`, a learning skill that breaks any architecture or system design down to first-principles concepts, and `vault-save`, a personal-utility skill for bookmarking useful Claude responses into an Obsidian vault without leaving the terminal. And `agent-team`, a skill that scaffolds and orchestrates an adaptive, role-based agent team — designing the team topology to fit the task and running it through a human-gated refine → review loop, with single-responsibility teammates backed by real subagent definitions.
 
 The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do work themselves; they coordinate the *other* skills you have installed so their domain expertise actually shapes how Claude answers and executes. `doc-system`, `system-explain`, and `vault-save` are the odd ones out — they don't orchestrate anything; `doc-system` generates canonical project docs, `system-explain` teaches the concepts behind a pasted design, `vault-save` captures and persists conversation output.
 
@@ -13,6 +13,7 @@ The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do
 | `skill-consult` | Skill | Pools 3–5 relevant skills as consultants and synthesizes an answer to a question or trade-off |
 | `skill-dispatch` | Skill | Decomposes multi-domain work into 2–6 independent subtasks, each run by a parallel subagent loaded with its own skills |
 | `skill-run` | Skill | Loads 2–5 skills as procedural guides and executes a task under their active workflow |
+| `agent-team` | Skill | Scaffolds and orchestrates an adaptive role-based agent team (Scout/Builder/Reviewer; split to Critic+Evaluator on stakes; Synthesizer/Integrator as needed) through a human-gated refine→review loop, designing the team topology to fit the task |
 | `doc-system` | Skill | Generates `PRD.md` / `SPEC.md` / `CLAUDE.md` for a Claude-Code-driven project via interview, optional brownfield inventory, and a pre-flight quality gate |
 | `system-explain` | Skill | Explains the foundational system-design concepts behind a pasted architecture, blog, or code from first principles — concept map, causal deep-dives, binding-constraint synthesis |
 | `vault-save` | Skill | Captures the most recent assistant response and writes it as a dated markdown note (with git-branch provenance) into an Obsidian vault |
@@ -23,6 +24,7 @@ The orchestration trio (`skill-consult`, `skill-dispatch`, `skill-run`) don't do
 Question / trade-off / "what should I…"   →  skill-consult
 Single-domain task to actually DO         →  skill-run
 Multi-domain / parallel investigation     →  skill-dispatch
+Orchestrate a persistent multi-agent team  →  agent-team
 Generate PRD / SPEC / CLAUDE.md docs      →  doc-system
 "Explain the concepts behind this design" →  system-explain
 Bookmark this response into the vault     →  vault-save
@@ -61,6 +63,27 @@ A quick mental model:
 **3. Verify** with `/plugin list` — you should see `meta-plugin` listed.
 
 ## Skills Reference
+
+### `agent-team`
+
+Use when a task is **substantial enough to warrant a persistent, role-based agent team** you drive as lead — multi-file features, large migrations, deep multi-source research, or design work where a gated refine → review loop beats a one-shot answer.
+
+**Trigger phrases / patterns:**
+- `/agent-team <task>`
+- "spin up a team for…", "orchestrate agents to…", "build this with a multi-agent team"
+
+**What it does:** In Phase 0 it interviews you to set explicit acceptance criteria and **design the team topology to fit the task** — choosing an archetype (gated build/refine · research fan-out · interdependent parallel slice build · staged pipeline) and a coordination tier (lead-mediated → experimental peer mailbox → dynamic workflow). It then scaffolds single-responsibility teammates — **Scout, Builder, Reviewer** (the Reviewer finds flaws *and* renders pass/fail with evidence; a non-blocking flaw still passes), splitting into a separate **Critic + Evaluator** only for high-stakes work, plus a **Synthesizer / Integrator** as the archetype needs — each backed by a real subagent definition (a shipped `agents/agent-team-*` or a better-matching installed agent) that enforces a tool whitelist. The lead orchestrates and synthesizes but **never authors the work product**, stops at **two human gates** (plan, then ship), caps the loop, and never ships autonomously.
+
+**Ships 7 role definitions** under `agents/`: `agent-team-{scout, builder, reviewer, critic, evaluator, synthesizer, integrator}`.
+
+**Example:**
+```
+/agent-team extract the billing module out of the monolith
+```
+
+**Don't use for** a single quick delegation, a one-shot parallel fan-out, a pure question, or a trivial one-file edit — a team's ~7× token cost only pays off on high-value, parallelizable, or larger-than-one-context work.
+
+---
 
 ### `skill-consult`
 

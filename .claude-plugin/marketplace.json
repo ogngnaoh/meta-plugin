@@ -5,21 +5,21 @@
   },
   "metadata": {
     "description": "Meta-skills marketplace for deliberate skill orchestration",
-    "version": "2.4.0"
+    "version": "2.5.0"
   },
   "plugins": [
     {
       "name": "meta-plugin",
       "source": "./",
-      "description": "Meta-skills for deliberate skill consultation, dispatch, and execution, a doc-system skill for generating PRD/SPEC/CLAUDE.md, a system-explain skill for first-principles system-design explanations, and a vault-save utility for stashing Claude responses into an Obsidian vault",
-      "version": "2.4.0",
+      "description": "Meta-skills for deliberate skill consultation, dispatch, and execution, an agent-team skill for scaffolding and orchestrating adaptive role-based agent teams, a doc-system skill for generating PRD/SPEC/CLAUDE.md, a system-explain skill for first-principles system-design explanations, and a vault-save utility for stashing Claude responses into an Obsidian vault",
+      "version": "2.5.0",
       "author": {
         "name": "Hoang",
         "url": "https://github.com/ogngnaoh"
       },
       "repository": "https://github.com/ogngnaoh/meta-plugin",
       "license": "MIT",
-      "keywords": ["meta-skills", "skill-orchestration", "consult", "dispatch", "vault", "obsidian", "documentation", "prd", "spec", "claude-md", "system-design", "first-principles"],
+      "keywords": ["meta-skills", "skill-orchestration", "agent-team", "multi-agent", "subagents", "orchestration", "consult", "dispatch", "vault", "obsidian", "documentation", "prd", "spec", "claude-md", "system-design", "first-principles"],
       "category": "productivity",
       "tags": ["meta", "skills", "orchestration", "documentation"]
     }
