@@ -1,12 +1,13 @@
 # meta-plugin
 
-A small collection of meta-skills for Claude Code. `agent-team` scaffolds and orchestrates an adaptive, role-based agent team — designing the team topology to fit the task and running it through a human-gated refine → review loop, with single-responsibility teammates backed by real subagent definitions. `doc-system` generates `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow. `system-explain` breaks any architecture or system design down to first-principles concepts. `vault-save` bookmarks useful Claude responses into an Obsidian vault without leaving the terminal.
+A small collection of meta-skills for Claude Code. `agent-team` scaffolds and orchestrates an adaptive, role-based agent team — designing the team topology to fit the task and running it through a human-gated refine → review loop, with single-responsibility teammates backed by real subagent definitions. `doc-system` generates `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow. `system-explain` breaks any architecture or system design down to first-principles concepts. `ship-slice` runs the slice-ship ritual — flipping status across `milestone.md` + `handoff.md`, freezing the slice doc, and advancing the "Next session start here" pointer in one atomic commit. `vault-save` bookmarks useful Claude responses into an Obsidian vault without leaving the terminal.
 
 ## Components
 
 | Name | Type | Purpose |
 |------|------|---------|
 | `agent-team` | Skill | Scaffolds and orchestrates an adaptive role-based agent team (Scout/Builder/Reviewer; split to Critic+Evaluator on stakes; Synthesizer/Integrator as needed) through a human-gated refine→review loop, designing the team topology to fit the task |
+| `ship-slice` | Skill | Atomically ships a vertical slice — flips status across `milestone.md` + `handoff.md`, freezes the slice doc, advances the "Next session start here" pointer, and lands it in one commit on the main-flow branch |
 | `doc-system` | Skill | Generates `PRD.md` / `SPEC.md` / `CLAUDE.md` for a Claude-Code-driven project via interview, optional brownfield inventory, and a pre-flight quality gate |
 | `system-explain` | Skill | Explains the foundational system-design concepts behind a pasted architecture, blog, or code from first principles — concept map, causal deep-dives, binding-constraint synthesis |
 | `vault-save` | Skill | Captures the most recent assistant response and writes it as a dated markdown note (with git-branch provenance) into an Obsidian vault |
@@ -15,6 +16,7 @@ A small collection of meta-skills for Claude Code. `agent-team` scaffolds and or
 
 ```
 Orchestrate a persistent multi-agent team  →  agent-team
+Mark a finished vertical slice shipped     →  ship-slice
 Generate PRD / SPEC / CLAUDE.md docs       →  doc-system
 "Explain the concepts behind this design"  →  system-explain
 Bookmark this response into the vault      →  vault-save
@@ -65,6 +67,27 @@ Use when a task is **substantial enough to warrant a persistent, role-based agen
 ```
 
 **Don't use for** a single quick delegation, a one-shot parallel fan-out, a pure question, or a trivial one-file edit — a team's ~7× token cost only pays off on high-value, parallelizable, or larger-than-one-context work.
+
+---
+
+### `ship-slice`
+
+Use when a **vertical slice is finished and ready to mark shipped** — the most error-prone bookkeeping moment in the milestone/slice workflow, where doing it by hand at the end of a long session tends to leave the docs half-updated.
+
+**Trigger phrases / patterns:**
+- `/ship-slice`
+- "ship this slice", "mark slice N shipped", "close out the slice", "finish the last slice of the milestone"
+
+**What it does:** Runs the slice-ship ritual as one atomic unit so the project's doc state can never end up half-updated. It confirms the project uses the convention (`docs/milestones.md` exists), identifies the `in-progress` slice (asking if ambiguous), checks the work is actually verified, and does worktree/branch safety so the commit can't vanish on a throwaway branch. Then it applies six edits together — flips the slice's status in `milestone.md` **and** `handoff.md` (kept in agreement), advances the next slice + the "Next session start here" pointer, freezes the slice doc, appends a dated ship-log line, and records the implementation commit refs — and lands all of it in **one commit on the main-flow branch**. If it's the milestone's last slice, the milestone-close (`milestones.md` → shipped, next `← active`) rides in the same commit by default. User-invoked only (`disable-model-invocation: true`).
+
+**Example:**
+```
+/ship-slice
+```
+
+**Heads-up for forks:** assumes the author's milestone/slice/handoff convention — a `docs/milestones.md` index, per-milestone `docs/NN-milestone/` folders with `milestone.md` + `handoff.md`, and the "When a slice ships" ritual — as defined in `~/.claude/CLAUDE.md`. If your project doesn't use that layout, the skill stops at its first check rather than inventing structure.
+
+**Don't use for** mid-implementation work (finish and verify the slice first — this is the bookkeeping+commit step), projects that don't use the milestone/slice docs, or *starting* the next slice (shipping ≠ starting; it stops after the report).
 
 ---
 
