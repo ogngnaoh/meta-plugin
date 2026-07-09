@@ -99,12 +99,12 @@ Section order is deliberate. Claude attends most reliably to the **start and end
 These files are synthesized on the fly by Claude Code during a session.
 Do NOT pre-create them.
 
-### handoff.md (overwrite each session, 20-40 lines)
-Sections in order:
-- Completed this session: <what shipped, with commit refs>
-- Current state: <what's deployed, in progress, on which branch>
+### handoff.md (overwrite each session — never append — ≤40 lines, 10-15 typical)
+Three sections, nothing else:
 - Next session start here: <literal first action>
+- Current state: <branch, what's deployed, what's mid-flight>
 - Active concerns: <fragile areas, open questions>
+No status tables, no commit refs, no ship log — milestone.md and git hold those.
 
 ### plan.md (per feature or milestone, 1-2 pages max)
 Sections: Goal (one sentence) / Components (with file paths) /

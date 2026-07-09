@@ -5,23 +5,45 @@
   },
   "metadata": {
     "description": "Meta-skills marketplace for agent-team orchestration, doc generation, system-design explanation, slice shipping, and vault capture",
-    "version": "3.1.0"
+    "version": "3.2.0"
   },
   "plugins": [
     {
       "name": "meta-plugin",
       "source": "./",
-      "description": "An agent-team skill for scaffolding and orchestrating adaptive role-based agent teams, a doc-system skill for generating PRD/SPEC/CLAUDE.md, a system-explain skill for first-principles system-design explanations, a ship-slice skill for atomically shipping a vertical slice (status flips across milestone.md + handoff.md, slice-doc freeze, next-session pointer) in one commit, and a vault-save utility for stashing Claude responses into an Obsidian vault",
-      "version": "3.1.0",
+      "description": "An agent-team skill for scaffolding and orchestrating adaptive role-based agent teams (explicit invocation or written debate/live-steering justification only \u2014 routing per the harness routing guide), a doc-system skill for generating PRD/SPEC/CLAUDE.md, a system-explain skill for first-principles system-design explanations, a ship-slice skill for atomically shipping a vertical slice (status flip in milestone.md, handoff pointer advance, teammate shutdown, one commit), and a vault-save utility for stashing Claude responses into an Obsidian vault",
+      "version": "3.2.0",
       "author": {
         "name": "Hoang",
         "url": "https://github.com/ogngnaoh"
       },
       "repository": "https://github.com/ogngnaoh/meta-plugin",
       "license": "MIT",
-      "keywords": ["agent-team", "multi-agent", "subagents", "orchestration", "vault", "obsidian", "documentation", "prd", "spec", "claude-md", "system-design", "first-principles", "slice", "milestone", "handoff", "vertical-slice"],
+      "keywords": [
+        "agent-team",
+        "multi-agent",
+        "subagents",
+        "orchestration",
+        "vault",
+        "obsidian",
+        "documentation",
+        "prd",
+        "spec",
+        "claude-md",
+        "system-design",
+        "first-principles",
+        "slice",
+        "milestone",
+        "handoff",
+        "vertical-slice"
+      ],
       "category": "productivity",
-      "tags": ["meta", "skills", "orchestration", "documentation"]
+      "tags": [
+        "meta",
+        "skills",
+        "orchestration",
+        "documentation"
+      ]
     }
   ]
 }

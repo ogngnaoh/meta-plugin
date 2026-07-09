@@ -1,5 +1,7 @@
 # Agent Teams — Condensed Guide
 
+> **Routing judgment superseded 2026-07-09** by `~/Documents/personal-vault/meta-workflows/2026-07-09-harness-routing-guide.md` — the *decision to use a team at all* is made there, before this skill fires. This digest remains the live operating reference for *running* a team once that decision is made.
+
 A condensed, self-contained digest of the full reference — enough to run a team without leaving this file. When a decision turns on a detail not captured here, consult the source.
 
 **Source:** *A Developer's Guide to Claude Code Agent Teams* — source-verified against official Anthropic documentation and engineering writeups (the subagents, agent-teams, dynamic-workflows, best-practices, and cost references). *(Local copy, if present: `/Users/hoangngo/Documents/personal-vault/meta-workflows/2026-06-16-claude-code-agent-teams-guide.md` — path may change if the vault moves; cite the title.)*

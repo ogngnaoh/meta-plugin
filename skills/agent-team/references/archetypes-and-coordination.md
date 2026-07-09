@@ -73,7 +73,7 @@ The lead is the hub; teammates are spokes that **don't talk to each other.** Thi
 
 ### Tier 2 — peer-to-peer mailbox *(experimental)*
 
-Escalate **only when slices must coordinate *live*** — the contract genuinely can't be fully pinned up front and Builders need to negotiate it *as they build* (e.g. two sides discovering the API shape together). Enable the experimental agent-teams mailbox (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`) so teammates `SendMessage` each other directly. Cost is high (~7× a standard session, scaling with team size) and it's experimental — so the bar is "tier-1 contract-first actually failed," not "it might be convenient." Most interdependent builds do **not** need this: a well-pinned contract removes the need for live chatter.
+Escalate **only when slices must coordinate *live*** — the contract genuinely can't be fully pinned up front and Builders need to negotiate it *as they build* (e.g. two sides discovering the API shape together). Enable the experimental agent-teams mailbox (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`) so teammates `SendMessage` each other directly. Cost is high (documented ~7× a standard session when teammates run in plan mode, scaling with team size) and it's experimental — so the bar is "tier-1 contract-first actually failed," not "it might be convenient." Most interdependent builds do **not** need this: a well-pinned contract removes the need for live chatter.
 
 ### Tier 3 — dynamic workflow
 

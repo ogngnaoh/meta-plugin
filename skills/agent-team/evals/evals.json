@@ -39,7 +39,7 @@
       "files": [],
       "expectations": [
         "Scales DOWN to match low complexity — keeps the default archetype, skips the optional Scout, and uses the default single Reviewer (NOT splitting into a separate Critic + Evaluator: the rename's criteria are mechanical, so the merged Reviewer is correct — and it is the default, not a size-based collapse) — rather than over-spawning the full roster or over-designing a heavier topology.",
-        "Notes that this task is near the single-agent floor (a team's overhead and ~7× token cost may not pay off) while still running the requested team leanly.",
+        "Notes that this task is near the single-agent floor (a team's overhead and documented ~7×-in-plan-mode token cost may not pay off) while still running the requested team leanly.",
         "Keeps the fixed guarantees despite the smaller team: explicit acceptance criteria set in the interview, a 4-part spawn contract, the lead orchestrator-only (the Builder does the rename), a loop cap, and both human gates.",
         "Has the Reviewer verify with evidence (e.g. a grep showing zero remaining FEATURE_X_ENABLED references) rather than asserting the rename is complete.",
         "Does not ship without GATE-B approval."
