@@ -1,5 +1,7 @@
 # agent-team — Design Spec
 
+> **Superseded 2026-07-10 (agent-team 3.4.0).** This spec's four-archetype "adaptive topology designer" and 7-role roster were reworked. The skill is now focused on one thing — **interview the user to design an agent team that fits the task, then build it** (scaffold and run the teammates to produce the work product) — carrying no routing/gatekeeping meta and no external-doc coupling. The old archetypes survive only as a non-prescriptive design menu (`references/archetypes-and-coordination.md`). Ships 5 roles (`scout/builder/critic/evaluator/integrator`; Critic + Evaluator are the optional review roles a team includes when its design calls for verification). Kept as historical design record; the live source is `skills/agent-team/SKILL.md`.
+
 **Date:** 2026-06-16
 **Status:** Approved — adaptive-topology reframe adopted (round 3). Built via a dogfooded team loop.
 **Home:** `skills/agent-team/SKILL.md` (+ `references/`, `evals/`) and plugin-level `agents/` in meta-plugin → bump to v2.5.0.

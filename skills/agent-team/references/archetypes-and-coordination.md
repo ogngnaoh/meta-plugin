@@ -1,92 +1,74 @@
-# Archetypes & Coordination — the per-shape playbook
+# Team patterns & coordination — a design menu
 
-`agent-team` doesn't run one fixed loop; in Phase 0 it **designs the topology to fit the task.** This file is the playbook behind that choice: for each archetype, its role set, control-flow, where the two gates sit, its typical coordination tier, and a worked example. Then the coordination-tier detail — most importantly, how to run **interdependent parallel Builders** without overwrites or deadlock.
+The interview designs the team that fits your task; this file is the menu it draws on. Each pattern below is a common team shape — its role set, control-flow, and a worked example — followed by the coordination mechanics that carry any of them. Mix and adapt: these are examples to design toward, not a fixed catalog.
 
-The archetypes are an **open, composable set** — start from the closest one and adapt, or compose a custom shape. Whatever you build reuses the [fixed invariants](../SKILL.md#fixed-vs-configurable): Phase 0 + topology design, **GATE A** (approve plan/approach) before the expensive work, **GATE B** (approve ship) before anything lands, an orchestrator-only lead, the 4-part contract on every spawn, single-responsibility roles, and a loop cap on any iterative stage. The review rules — fresh context, only diff + criteria, evidence shown (whether one Reviewer or a split Critic + Evaluator) — apply **whenever the Review phase is present**.
-
----
-
-## 1. Gated build/refine *(default)*
-
-- **For:** producing a work product to a quality bar — features, refactors, docs, a design.
-- **Roles:** Scout *(optional)* · Builder · **Reviewer** (split into a separate Critic + Evaluator only as a high-stakes escalation).
-- **Control-flow:** mostly **sequential** — Scout → plan → Build → Review, looping Build→Review under the cap. The Reviewer (or, when split, the Critic) may fan out by dimension within a round.
-- **Gates:** **GATE A** after the plan (whether or not a Scout ran), before the first Build. **GATE B** after the review passes with evidence and zero open blocking findings.
-- **Coordination tier:** **tier 1** (lead-mediated). One Builder; nothing to coordinate live.
-- **Worked example — "add a DLQ handler to our Kafka consumer":** Scout maps the consumer loop + retry path → plan → GATE A → Builder writes the handler + wiring + tests → a fresh-context Reviewer gets only the diff + criteria ("poison message lands in DLQ after 3 retries; consumer keeps draining"), finds any defects, runs the integration tests, and renders pass/fail with the pasted output → round 2 if needed → GATE B. *(Tests-pass is a mechanical criterion, so the merged Reviewer suffices — no split.)*
-
-This is the canonical shape; the other three reshape its middle.
+Every pattern reuses the discipline the SKILL body sets: an orchestrator-only lead, the 4-part contract on every spawn, single-responsibility roles, artifacts-to-disk hand-offs, strict file ownership, and a loop cap. When the work is reviewed, the review runs in fresh context, sees only the output + acceptance criteria, and shows evidence.
 
 ---
 
-## 2. Research fan-out
+## 1. Adversarial multi-lens review
 
-- **For:** breadth-first investigation or comparison where there's **no single artifact to "build"** — the deliverable is knowledge: a memo, a recommendation, a landscape.
-- **Roles:** N parallel Scouts/Researchers (one per option/area) · **Synthesizer** · a light verify pass (a Reviewer checking the synthesis against the criteria — *not* a build loop).
-- **Control-flow:** **parallel** Scouts → barrier → **Synthesizer merges** → light verify. Fan-in, not a loop.
-- **Gates:** **GATE A** approves the *research plan* — the questions, the comparison axes, the criteria for a "defensible" answer — before fanning out (that's where the spend is). **GATE B** approves the synthesized deliverable.
-- **Coordination tier:** **tier 1.** Scouts are independent and read-only; they never touch each other's work, so no live coordination is needed.
-- **Worked example — "compare pgvector, Qdrant, Pinecone for our RAG workload":** GATE A pins the axes (latency at 10M vectors, self-host cost, ops maturity, a defensible recommendation) → three Scouts run in parallel, one per database, each writing `docs/agent-team/research-<db>.md` → the Synthesizer reads all three, builds one comparison memo, and **surfaces where the sources disagree or leave gaps** rather than concatenating → a verify pass checks every axis is covered and claims are sourced → GATE B.
-- **Why not the gated loop:** there's no diff to review and nothing to "pass/fail-build." Forcing a Build→Review loop here wastes effort on work that has nothing to ship; the Synthesizer + a light verify is the right shape.
+- **For:** high-stakes work where one reviewer isn't enough — you want independent lenses that **surface and challenge each other's findings**.
+- **Roles:** N **Critics** (one per lens: correctness · security · perf · data-integrity · …) · **Evaluator**.
+- **Control-flow:** Critics review in parallel, then **compare/challenge** each other's findings (peer mailbox) so a weak or duplicated finding gets knocked down and a missed dimension gets caught; the Evaluator then renders per-criterion pass/fail with evidence.
+- **Coordination:** peer mailbox — the challenge *between* Critics is the point.
+- **Worked example — "review the payments refactor before we ship":** pin four lenses (correctness, money-rounding, idempotency, auth) + criteria → four Critics review the diff in parallel, each handed only diff + criteria, then reconcile: the idempotency Critic's "double-charge on retry" survives cross-challenge, two overlapping style flags get dropped → the Evaluator confirms each criterion with real test/repro output.
 
 ---
 
-## 3. Parallel slice build *(interdependent components)*
+## 2. Competing-hypothesis debugging
 
-- **For:** complex multi-component features whose slices **touch each other** — shared types, an API both sides call, a schema several modules import.
-- **Roles:** lead pins the contract · N **Builders**, each owning one slice · **Integrator** · a **Reviewer** (split into a separate Critic + Evaluator when the change is high-stakes — a migration usually is; see the worked example).
-- **Control-flow:** **contract-first, then parallel, then integrate.** The lead pins shared interfaces *before* any Builder starts; Builders run in parallel under **strict file ownership** (or `isolation: worktree`); the Integrator assembles the slices, resolves seams, and runs integration checks; then review over the integrated whole.
-- **Gates:** **GATE A** approves the **contract + the slice/ownership map + the dependency order** — this is the highest-leverage gate in the whole skill, because a wrong contract makes every parallel slice wrong at once. **GATE B** approves the integrated, evaluated result.
-- **Coordination tier:** **tier 1 by default** (contract-first + `blockedBy` on the shared task list); **escalate to tier 2** only if slices must renegotiate the contract *while building* (see below).
-- **Worked example — "extract the billing module out of the monolith (≈40 call sites)":**
-  1. **Pin the contract (lead):** define the new package's public surface — exported functions, types, import path — and write it to `docs/agent-team/contract.md`. Nothing builds against a moving target.
-  2. **Map ownership + dependencies → GATE A:** Slice 1 = move code into the package (owns `billing/**`); Slice 2 = split the tests (owns `tests/billing/**`); Slice 3 = update the ≈40 call-site imports (owns the call-site files). Slice 3 `blockedBy` Slice 1 (the import path must exist first). User approves contract + map.
-  3. **Build in parallel under strict ownership:** Builders 1 and 2 run concurrently (disjoint files); Builder 3 starts when Slice 1 unblocks it. Use `isolation: worktree` if the file sets can't be cleanly partitioned. **Never two Builders on one file** — that's the classic overwrite failure.
-  4. **Integrate:** the Integrator pulls the slices together, fixes seams the contract didn't fully specify, and runs the build + full test suite across all call sites, **showing the output**.
-  5. **Review (split into Critic + Evaluator — a billing migration is high-blast-radius/irreversible, so the un-anchored second opinion is worth its cost) → GATE B:** the Critic gets the integrated diff + criteria; the Evaluator independently confirms every call site compiles and tests pass with evidence.
+- **For:** a stubborn bug where the failure mode is genuinely unknown and you want rival explanations pressure-tested against each other rather than one line of inquiry.
+- **Roles:** N **investigators** (Scout-backed, one per hypothesis) · **Evaluator**.
+- **Control-flow:** each investigator pursues one hypothesis and, via the mailbox, **tries to disprove the others'** ("scientific debate"); survivors are the ones no one could refute. The Evaluator (or you) confirms the surviving hypothesis with a reproduction as evidence before any fix is built.
+- **Coordination:** peer mailbox — disproving each other *is* the coordination.
+- **Worked example — "intermittent 500s under load, cause unknown":** frame three hypotheses (connection-pool exhaustion · a race in the cache-fill · an upstream timeout) → three investigators dig in parallel and message counter-evidence at each other; pool-exhaustion is refuted by metrics one surfaces, the race survives every challenge → Evaluator reproduces the race deterministically.
 
 ---
 
-## 4. Pipeline
+## 3. Live-negotiated parallel build
 
-- **For:** staged, dependent work where each stage **consumes the last** and a human should be able to stop between stages — e.g. brainstorm → design spec → plan → build → verify.
-- **Roles:** one focused role per stage (e.g. a Scout/brainstormer, a planner-Builder, a build-Builder, a Reviewer) — single responsibility per stage.
-- **Control-flow:** **strictly sequential** with an optional gate between stages; no fan-out, because each stage needs the previous stage's output.
-- **Gates:** the two mandatory gates map onto stage boundaries — **GATE A** at the plan/spec boundary (approve direction before build), **GATE B** before ship. Additional inter-stage checkpoints are optional but cheap.
-- **Coordination tier:** **tier 1.** Sequential by nature — there's nothing concurrent to coordinate.
-- **Worked example — "design and ship a new onboarding flow":** brainstorm the intent → write a design spec → **GATE A** → plan the implementation → build → verify with evidence → **GATE B**. If a later stage invalidates an earlier one, loop back to that stage under the cap rather than patching forward.
+- **For:** interdependent components whose shared interface is **discovered as they build** — the sides can't fully pin the contract up front.
+- **Roles:** lead seeds the contract · N **Builders**, each owning one slice, negotiating seams live · **Integrator** · a review.
+- **Control-flow:** seed the contract → parallel Builders under **strict file ownership** (or `isolation: worktree`) who **`SendMessage` each other to renegotiate seams** as they surface → Integrator assembles and runs integration checks → review over the integrated whole.
+- **Coordination:** peer mailbox for the live seam negotiation. *If the contract can be pinned up front, the Builders don't need to talk — pin it and run them hub-and-spoke instead (simpler and cheaper).*
+- **Worked example — "add a streaming protocol two services co-design":** seed a draft frame format → map ownership (Service A owns `producer/**`, B owns `consumer/**`) → both build in parallel; when B discovers the frame needs a sequence field, it messages A and they amend the contract live → Integrator wires them and runs an end-to-end round-trip with real output → review.
+
+---
+
+## 4. Live human steering
+
+- **For:** several independent workers you want to **watch and redirect mid-run** across panes — the value is your live judgment in the loop.
+- **Roles:** any of the above, spawned as long-lived teammates you steer.
+- **Control-flow:** teammates work in parallel; you observe, correct, re-scope, and reprioritise between turns rather than waiting for a batch to finish.
+- **Coordination:** panes + mailbox.
 
 ---
 
-## Coordination tiers — pick the smallest that works
+## Coordination mechanics
 
-Coordination is **configurable and first-class.** Default to the lowest tier; climb only when its constraint actually bites. (The escalation ladder with costs and version gates is in `orchestration-and-escalation.md`.)
+**Default relay is hub-and-spoke; escalate to the mailbox only where a pattern above needs it.** You are the hub: you spawn each teammate through a tool-whitelisted definition with a self-contained 4-part prompt, read each return, synthesize, and route the next. Teammates message each other directly (peer mailbox) only for the challenge/negotiation a pattern requires; everything else relays through you.
 
-### Tier 1 — lead-mediated / contract-first *(default)*
+- **Artifacts to disk, references between agents.** Every intermediate output — scout report, diff, findings, integration note — is written to a file (e.g. under `docs/agent-team/`); you pass the *path*, not the pasted content. This is the single most important anti-telephone move.
+- **The lead's task list (`blockedBy`).** You keep your own task list for sequencing and cross-slice dependencies — a Builder whose slice depends on another's isn't spawned until its blocker is done.
+- **Strict file ownership.** Every Builder's prompt names the exact files it owns and forbids the rest. Two Builders on one file overwrite each other — the classic failure. If ownership can't be partitioned, give each `isolation: worktree`.
+- **Integrate through one role.** Parallel slices are assembled by a single **Integrator**, not by each Builder reaching into the others — the seams stay in one accountable place.
 
-The lead is the hub; teammates are spokes that **don't talk to each other.** This carries almost everything, *including interdependent parallel slices*, via four moves:
+## Coordination tiers
 
-- **Contract-first.** Before any parallel Builder starts, the lead pins the shared interfaces/API/schema and writes them to disk (e.g. `docs/agent-team/contract.md`). Each Builder's spawn prompt quotes the contract verbatim. This is what lets independent contexts produce pieces that fit.
-- **Dependency tracking via the shared task list.** The lead keeps its own task list (Task tools) and records cross-slice dependencies with **`blockedBy`** — a Builder whose slice depends on another's output isn't spawned until its blocker is done. This is the lead's single-owner list; teammate self-claiming is a tier-2 feature.
-- **Strict file ownership.** Every Builder's spawn prompt names the exact file set it owns and forbids touching anything else. Two Builders on one file overwrite each other — the classic team failure. If ownership can't be cleanly partitioned, give each Builder `isolation: worktree`.
-- **Integrate through one role.** Parallel slices are assembled by a single **Integrator**, not by each Builder reaching into the others — that keeps the seams in one accountable place.
+| Tier | Mechanism | Reach for it when | Cost |
+|---|---|---|---|
+| **Hub-and-spoke** *(default)* | Teammates report to you; you relay and track `blockedBy`. | Almost everything — teammates don't need to talk to each other. | Lowest. |
+| **Peer mailbox** | Long-lived teammates share a task list + mailbox; `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` (experimental). | Teammates must challenge/negotiate live, or you steer panes. | ~7× a standard session *in plan mode*; ~linear per teammate otherwise. |
+| **Dynamic workflow** | Background JS orchestrates many subagents, returns one consolidated result. | 10+ agents / codebase-wide, where manual spawning is unwieldy. | Scales with subagent count. |
 
-### Tier 2 — peer-to-peer mailbox *(experimental)*
+## Don't-parallelize checklist
 
-Escalate **only when slices must coordinate *live*** — the contract genuinely can't be fully pinned up front and Builders need to negotiate it *as they build* (e.g. two sides discovering the API shape together). Enable the experimental agent-teams mailbox (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`) so teammates `SendMessage` each other directly. Cost is high (documented ~7× a standard session when teammates run in plan mode, scaling with team size) and it's experimental — so the bar is "tier-1 contract-first actually failed," not "it might be convenient." Most interdependent builds do **not** need this: a well-pinned contract removes the need for live chatter.
-
-### Tier 3 — dynamic workflow
-
-For **10+ agents or codebase-wide** fan-out (audits, large batch migrations) where manual spawning is unwieldy: a background JS orchestration script fans out/in over many subagents and returns one consolidated result, preserved as a reusable artifact. Reach for it when tier-2 manual coordination stops scaling.
-
----
+Before fanning out, confirm the work is actually parallel. Bad fits — keep sequential or single-agent: same-file edits (overwrites); tightly-coupled steps where each consumes the last; tasks small enough that one agent finishes before a team finishes spawning. Most coding tasks have fewer truly parallel subtasks than research does.
 
 ## Quick chooser
 
-- Deliverable is **knowledge / a comparison**, no artifact to build → **research fan-out** (Scouts → Synthesizer).
-- One coherent artifact to a quality bar → **gated build/refine** (the default).
-- Several components that **share interfaces and touch** → **parallel slice build** (contract-first → parallel Builders → Integrator).
-- **Staged** work where each step feeds the next → **pipeline**.
-- None fit cleanly → **compose** a custom topology from the roles, keeping every fixed invariant.
-
-When in doubt, prefer the simplest shape and the lowest coordination tier; you can always escalate, and the gates make over-investment recoverable.
+- Independent lenses that **challenge each other** on one artifact → **adversarial multi-lens review**.
+- Unknown failure mode, want **rival explanations pressure-tested** → **competing-hypothesis debugging**.
+- Interdependent components whose **interface is discovered live** → **live-negotiated parallel build** (pin the contract instead and it's a simple hub-and-spoke build).
+- Several workers you'll **watch and redirect live** → **live human steering**.

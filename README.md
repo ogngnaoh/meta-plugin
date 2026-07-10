@@ -1,12 +1,12 @@
 # meta-plugin
 
-A small collection of meta-skills for Claude Code. `agent-team` scaffolds and orchestrates an adaptive, role-based agent team — designing the team topology to fit the task and running it through a human-gated refine → review loop, with single-responsibility teammates backed by real subagent definitions. `doc-system` generates `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow. `system-explain` breaks any architecture or system design down to first-principles concepts. `ship-slice` runs the slice-ship ritual — flipping status in `milestone.md`, advancing the "Next session start here" pointer in `handoff.md`, and shutting down the slice's teammates/goals, all in one atomic commit. `vault-save` bookmarks useful Claude responses into an Obsidian vault without leaving the terminal.
+A small collection of meta-skills for Claude Code. `agent-team` interviews you to design a role-based agent team that fits your task and runs it to produce the work product — with single-responsibility teammates backed by real subagent definitions that enforce per-role tool whitelists. `doc-system` generates `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow. `system-explain` breaks any architecture or system design down to first-principles concepts. `ship-slice` runs the slice-ship ritual — flipping status in `milestone.md`, advancing the "Next session start here" pointer in `handoff.md`, and shutting down the slice's teammates/goals, all in one atomic commit. `vault-save` bookmarks useful Claude responses into an Obsidian vault without leaving the terminal.
 
 ## Components
 
 | Name | Type | Purpose |
 |------|------|---------|
-| `agent-team` | Skill | Scaffolds and orchestrates an adaptive role-based agent team (Scout/Builder/Reviewer; split to Critic+Evaluator on stakes; Synthesizer/Integrator as needed) through a human-gated refine→review loop, designing the team topology to fit the task |
+| `agent-team` | Skill | Interviews you to design a role-based agent team that fits a task and runs it to produce the work product. Roles Scout/Builder/Critic/Evaluator/Integrator, backed by real subagent definitions with per-role tool whitelists |
 | `ship-slice` | Skill | Atomically ships a vertical slice — flips status in `milestone.md` (the single live home of status), advances handoff's "Next session start here" pointer, shuts down the slice's teammates/standing goals, and lands it in one commit on the main-flow branch |
 | `doc-system` | Skill | Generates `PRD.md` / `SPEC.md` / `CLAUDE.md` for a Claude-Code-driven project via interview, optional brownfield inventory, and a pre-flight quality gate |
 | `system-explain` | Skill | Explains the foundational system-design concepts behind a pasted architecture, blog, or code from first principles — concept map, causal deep-dives, binding-constraint synthesis |
@@ -15,7 +15,7 @@ A small collection of meta-skills for Claude Code. `agent-team` scaffolds and or
 ## When to use which skill
 
 ```
-Orchestrate a persistent multi-agent team  →  agent-team
+Build & run a role-based agent team        →  agent-team
 Mark a finished vertical slice shipped     →  ship-slice
 Generate PRD / SPEC / CLAUDE.md docs       →  doc-system
 "Explain the concepts behind this design"  →  system-explain
@@ -51,22 +51,22 @@ Bookmark this response into the vault      →  vault-save
 
 ### `agent-team`
 
-Use **only on explicit invocation, or when the task genuinely needs what a team uniquely adds**: teammates that debate/challenge each other, or live human steering mid-run — stated in one written who-challenges-whom sentence before spawning. Task size alone (multi-file features, migrations, research syntheses) routes to a single session, subagent fan-out, or Workflow script instead — see the harness routing guide.
+Invoke it when you want a role-based agent team on a task — you drive as lead. The skill does one thing, in two steps: **interview** you to design the team that fits, then **build** it — scaffold and run the teammates to produce the work product.
 
 **Trigger phrases / patterns:**
 - `/agent-team <task>`
 - "spin up a team for…", "orchestrate agents to…", "build this with a multi-agent team"
 
-**What it does:** In Phase 0 it interviews you to set explicit acceptance criteria and **design the team topology to fit the task** — choosing an archetype (gated build/refine · research fan-out · interdependent parallel slice build · staged pipeline) and a coordination tier (lead-mediated → experimental peer mailbox → dynamic workflow). It then scaffolds single-responsibility teammates — **Scout, Builder, Reviewer** (the Reviewer finds flaws *and* renders pass/fail with evidence; a non-blocking flaw still passes), splitting into a separate **Critic + Evaluator** only for high-stakes work, plus a **Synthesizer / Integrator** as the archetype needs — each backed by a real subagent definition (a shipped `agents/agent-team-*` or a better-matching installed agent) that enforces a tool whitelist. The lead orchestrates and synthesizes but **never authors the work product**, stops at **two human gates** (plan, then ship), caps the loop, and never ships autonomously.
+**What it does:** First it **interviews** you to establish the task, design the team it needs (which roles, who owns what, how they coordinate — drawing on common patterns like adversarial multi-lens review, competing-hypothesis debugging, or a live-negotiated parallel build), and pin explicit acceptance criteria. Then it **builds**: scaffolds single-responsibility teammates — Scout/investigator, Builder, Integrator, and (when the team's design calls for verification) review roles Critic + Evaluator — each backed by a real subagent definition (a shipped `agents/agent-team-*` or a better-matching installed agent) that enforces a tool whitelist, spawned with a full 4-part contract; the lead orchestrates and synthesizes but **never authors the work product**, works teammates under strict file ownership, and caps the loop.
 
-**Ships 7 role definitions** under `agents/`: `agent-team-{scout, builder, reviewer, critic, evaluator, synthesizer, integrator}`.
+**Ships 5 role definitions** under `agents/`: `agent-team-{scout, builder, critic, evaluator, integrator}`.
 
 **Example:**
 ```
-/agent-team extract the billing module out of the monolith
+/agent-team build the real-time notifications feature end-to-end
 ```
 
-**Don't use for** a single quick delegation, a one-shot parallel fan-out, a pure question, or a trivial one-file edit — and don't reach for a team on task size alone. Documented cost is ~7× a standard session when teammates run in plan mode (scaling with team size); it pays off only when workers must genuinely debate or be steered live.
+**Don't use for** a single quick delegation, a pure question, or a trivial one-file edit — those don't need a team. Note that a team's documented cost is ~7× a standard session when teammates run in plan mode (~linear per teammate otherwise), scaling with team size.
 
 ---
 
