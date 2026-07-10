@@ -59,7 +59,7 @@ Every pattern reuses the discipline the SKILL body sets: an orchestrator-only le
 | Tier | Mechanism | Reach for it when | Cost |
 |---|---|---|---|
 | **Hub-and-spoke** *(default)* | Teammates report to you; you relay and track `blockedBy`. | Almost everything — teammates don't need to talk to each other. | Lowest. |
-| **Peer mailbox** | Long-lived teammates share a task list + mailbox; `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` (experimental). | Teammates must challenge/negotiate live, or you steer panes. | ~7× a standard session *in plan mode*; ~linear per teammate otherwise. |
+| **Peer mailbox** | Long-lived teammates share a task list + mailbox; `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` (experimental). | Teammates must challenge/negotiate live, or you steer panes. | ~7× a standard session *in plan mode*; significantly more tokens otherwise (not quantified by docs). |
 | **Dynamic workflow** | Background JS orchestrates many subagents, returns one consolidated result. | 10+ agents / codebase-wide, where manual spawning is unwieldy. | Scales with subagent count. |
 
 ## Don't-parallelize checklist
