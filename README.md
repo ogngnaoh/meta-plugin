@@ -1,12 +1,11 @@
 # meta-plugin
 
-A small collection of meta-skills for Claude Code. `agent-team` interviews you to design a role-based agent team that fits your task and runs it to produce the work product — with single-responsibility teammates backed by real subagent definitions that enforce per-role tool whitelists. `doc-system` generates `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow. `system-explain` breaks any architecture or system design down to first-principles concepts. `ship-slice` runs the slice-ship ritual — flipping status in `milestone.md`, advancing the "Next session start here" pointer in `handoff.md`, and shutting down the slice's teammates/goals, all in one atomic commit. `vault-save` bookmarks useful Claude responses into an Obsidian vault without leaving the terminal.
+A small collection of meta-skills for Claude Code. `doc-system` generates `PRD.md` / `SPEC.md` / `CLAUDE.md` via an interview-and-quality-gate workflow. `system-explain` breaks any architecture or system design down to first-principles concepts. `ship-slice` runs the slice-ship ritual — flipping status in `milestone.md`, advancing the "Next session start here" pointer in `handoff.md`, and shutting down the slice's teammates/goals, all in one atomic commit. `vault-save` bookmarks useful Claude responses into an Obsidian vault without leaving the terminal.
 
 ## Components
 
 | Name | Type | Purpose |
 |------|------|---------|
-| `agent-team` | Skill | Interviews you to design a role-based agent team that fits a task and runs it to produce the work product. Roles Scout/Builder/Critic/Evaluator/Integrator, backed by real subagent definitions with per-role tool whitelists |
 | `ship-slice` | Skill | Atomically ships a vertical slice — flips status in `milestone.md` (the single live home of status), advances handoff's "Next session start here" pointer, shuts down the slice's teammates/standing goals, and lands it in one commit on the main-flow branch |
 | `doc-system` | Skill | Generates `PRD.md` / `SPEC.md` / `CLAUDE.md` for a Claude-Code-driven project via interview, optional brownfield inventory, and a pre-flight quality gate |
 | `system-explain` | Skill | Explains the foundational system-design concepts behind a pasted architecture, blog, or code from first principles — concept map, causal deep-dives, binding-constraint synthesis |
@@ -15,7 +14,6 @@ A small collection of meta-skills for Claude Code. `agent-team` interviews you t
 ## When to use which skill
 
 ```
-Build & run a role-based agent team        →  agent-team
 Mark a finished vertical slice shipped     →  ship-slice
 Generate PRD / SPEC / CLAUDE.md docs       →  doc-system
 "Explain the concepts behind this design"  →  system-explain
@@ -48,27 +46,6 @@ Bookmark this response into the vault      →  vault-save
 **3. Verify** with `/plugin list` — you should see `meta-plugin` listed.
 
 ## Skills Reference
-
-### `agent-team`
-
-Invoke it when you want a role-based agent team on a task — you drive as lead. The skill does one thing, in two steps: **interview** you to design the team that fits, then **build** it — scaffold and run the teammates to produce the work product.
-
-**Trigger phrases / patterns:**
-- `/agent-team <task>`
-- "spin up a team for…", "orchestrate agents to…", "build this with a multi-agent team"
-
-**What it does:** First it **interviews** you to establish the task, design the team it needs (which roles, who owns what, how they coordinate — drawing on common patterns like adversarial multi-lens review, competing-hypothesis debugging, or a live-negotiated parallel build), and pin explicit acceptance criteria. Then it **builds**: scaffolds single-responsibility teammates — Scout/investigator, Builder, Integrator, and (when the team's design calls for verification) review roles Critic + Evaluator — each backed by a real subagent definition (a shipped `agents/agent-team-*` or a better-matching installed agent) that enforces a tool whitelist, spawned with a full 4-part contract; the lead orchestrates and synthesizes but **never authors the work product**, works teammates under strict file ownership, and caps the loop.
-
-**Ships 5 role definitions** under `agents/`: `agent-team-{scout, builder, critic, evaluator, integrator}`.
-
-**Example:**
-```
-/agent-team build the real-time notifications feature end-to-end
-```
-
-**Don't use for** a single quick delegation, a pure question, or a trivial one-file edit — those don't need a team. Note that a team's documented cost is ~7× a standard session when teammates run in plan mode (~linear per teammate otherwise), scaling with team size.
-
----
 
 ### `ship-slice`
 
@@ -121,7 +98,7 @@ Fuzzy-matches the subfolder argument against existing folders (e.g. `research` �
 
 **Heads-up for forks:** the skill assumes the author's vault layout — `/Users/hoangngo/Documents/personal-vault/` with subfolders like `claude-notes`, `claude-research-output`, `meta-workflows`. If you fork this plugin, edit the vault root and the subfolder names referenced in `skills/vault-save/SKILL.md` before using it. No env-var/config knob yet; it's a personal utility.
 
-**Don't use for** orchestrating other skills — that's what the trio is for. `vault-save` is just a persistence helper.
+**Don't use for** anything beyond persistence — `vault-save` is just a bookmark helper.
 
 ## Content generation
 

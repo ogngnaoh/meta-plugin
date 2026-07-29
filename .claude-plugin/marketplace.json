@@ -4,15 +4,15 @@
     "name": "Hoang"
   },
   "metadata": {
-    "description": "Meta-skills marketplace for agent-team orchestration, doc generation, system-design explanation, slice shipping, and vault capture",
-    "version": "3.4.1"
+    "description": "Meta-skills marketplace for doc generation, system-design explanation, slice shipping, and vault capture",
+    "version": "4.0.0"
   },
   "plugins": [
     {
       "name": "meta-plugin",
       "source": "./",
-      "description": "An agent-team skill that interviews you to design a role-based agent team for a task and runs it to produce the work product, a doc-system skill for generating PRD/SPEC/CLAUDE.md, a system-explain skill for first-principles system-design explanations, a ship-slice skill for atomically shipping a vertical slice (status flip in milestone.md, handoff pointer advance, teammate shutdown, one commit), and a vault-save utility for stashing Claude responses into an Obsidian vault",
-      "version": "3.4.1",
+      "description": "A doc-system skill for generating PRD/SPEC/CLAUDE.md, a system-explain skill for first-principles system-design explanations, a ship-slice skill for atomically shipping a vertical slice (status flip in milestone.md, handoff pointer advance, teammate shutdown, one commit), and a vault-save utility for stashing Claude responses into an Obsidian vault",
+      "version": "4.0.0",
       "author": {
         "name": "Hoang",
         "url": "https://github.com/ogngnaoh"
@@ -20,10 +20,6 @@
       "repository": "https://github.com/ogngnaoh/meta-plugin",
       "license": "MIT",
       "keywords": [
-        "agent-team",
-        "multi-agent",
-        "subagents",
-        "orchestration",
         "vault",
         "obsidian",
         "documentation",
@@ -41,7 +37,6 @@
       "tags": [
         "meta",
         "skills",
-        "orchestration",
         "documentation"
       ]
     }
